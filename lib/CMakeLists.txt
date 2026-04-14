@@ -91,19 +91,6 @@ if(BUILD_SERVER)
 		set_property(TARGET pawn-runtime PROPERTY POSITION_INDEPENDENT_CODE ON)
 	endif()
 
-if(BUILD_LEGACY_COMPONENTS)
-# RakNet
-# ------
-add_subdirectory(RakNet)
-set_property(TARGET raknet PROPERTY FOLDER "lib")
-target_compile_options(raknet
-	PRIVATE
-		"-Wno-logical-op-parentheses"
-		"-Wno-bitwise-op-parentheses"
-		"-Wno-#pragma-messages"
-)
-endif()
-
 # ttmath
 # ------
 add_subdirectory(ttmath)

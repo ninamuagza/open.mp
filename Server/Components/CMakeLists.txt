@@ -37,12 +37,6 @@ if(BUILD_UNICODE_COMPONENT)
 	add_subdirectory(Unicode)
 endif()
 
-# Legacy
-if(BUILD_LEGACY_COMPONENTS)
-add_subdirectory(LegacyNetwork)
-add_subdirectory(LegacyConfig)
-endif()
-
 # Test
 if(BUILD_TEST_COMPONENTS)
 	add_subdirectory(DatabasesTest)

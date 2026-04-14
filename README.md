@@ -62,13 +62,6 @@ cmake .. -A Win32 -T ClangCL
 cmake --build . --config RelWithDebInfo
 ```
 
-Legacy components (including RakNet legacy networking) are disabled by default.
-To build with legacy components enabled, pass:
-
-```bash
-cmake .. -DBUILD_LEGACY_COMPONENTS=ON
-```
-
 ## Building on Mac
 
 If you install conan via brew you must ensure you get the correct version; however, the cmake-conan script will not detect it from the default install location.  You must therefore also alias it elsewhere:
