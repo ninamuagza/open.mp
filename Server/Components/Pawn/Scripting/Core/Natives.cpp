@@ -379,10 +379,8 @@ SCRIPT_API(GetNetworkStats, bool(OutputOnlyString& output))
 
 	for (INetwork* network : PawnManager::Get()->core->getNetworks())
 	{
-		if (network->getNetworkType() == ENetworkType::ENetworkType_RakNetLegacy)
-		{
-			stats = network->getStatistics();
-		}
+		stats = network->getStatistics();
+		break;
 	}
 
 	stream

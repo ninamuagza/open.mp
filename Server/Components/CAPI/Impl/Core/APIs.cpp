@@ -159,10 +159,8 @@ OMP_CAPI(Core_NetworkStats, int(OutputStringBufferPtr output))
 
 	for (INetwork* network : ComponentManager::Get()->core->getNetworks())
 	{
-		if (network->getNetworkType() == ENetworkType::ENetworkType_RakNetLegacy)
-		{
-			stats = network->getStatistics();
-		}
+		stats = network->getStatistics();
+		break;
 	}
 
 	stream
