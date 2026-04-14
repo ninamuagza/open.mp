@@ -46,6 +46,12 @@ git clone --recursive git@github.com:openmultiplayer/open.mp
 
 Note the use of the `--recursive` argument, because this repository contains submodules.
 
+## Minimal Pawn example
+
+For a minimal server-side Pawn script example, see:
+
+* `examples/minimal.pwn`
+
 ## Building on Windows
 
 ```bash
@@ -69,7 +75,5 @@ cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make
 ```
-
-
 
 

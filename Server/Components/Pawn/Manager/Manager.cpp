@@ -12,7 +12,6 @@
 */
 
 #include "Manager.hpp"
-#include "../PluginManager/PluginManager.hpp"
 #include "../utils.hpp"
 #include <utils.hpp>
 
@@ -62,7 +61,6 @@ PawnManager::~PawnManager()
 		mainScript_->Call("OnGameModeExit", DefaultReturnValue_False);
 		CallInSides("OnGameModeExit", DefaultReturnValue_False);
 		PawnTimerImpl::Get()->killTimers(mainScript_->GetAMX());
-		pluginManager.AmxUnload(mainScript_->GetAMX());
 		eventDispatcher.dispatch(&PawnEventHandler::onAmxUnload, *mainScript_);
 	}
 	for (IPawnScript* cur : scripts_)
@@ -70,18 +68,12 @@ PawnManager::~PawnManager()
 		IPawnScript& script = *cur;
 		script.Call("OnFilterScriptExit", DefaultReturnValue_False);
 		PawnTimerImpl::Get()->killTimers(script.GetAMX());
-		pluginManager.AmxUnload(script.GetAMX());
 		eventDispatcher.dispatch(&PawnEventHandler::onAmxUnload, script);
 	}
 }
 
 void PawnManager::OnServerCommandList(FlatHashSet<StringView>& commands)
 {
-	commands.emplace("loadfs");
-	commands.emplace("unloadfs");
-	commands.emplace("reloadfs");
-	commands.emplace("gmx");
-	commands.emplace("changemode");
 	commands.emplace("loadscript");
 	commands.emplace("unloadscript");
 	commands.emplace("reloadscript");
@@ -89,62 +81,7 @@ void PawnManager::OnServerCommandList(FlatHashSet<StringView>& commands)
 
 bool PawnManager::OnServerCommand(const ConsoleCommandSenderData& sender, std::string const& cmd, std::string const& args)
 {
-	// Legacy commands.
-	if (cmd == "loadfs")
-	{
-		if (!Load("filterscripts/" + args))
-		{
-			console->sendMessage(sender, "Filterscript '" + args + "' load failed.");
-		}
-		else
-		{
-			console->sendMessage(sender, "Filterscript '" + args + "' loaded.");
-		}
-		return true;
-	}
-	else if (cmd == "unloadfs")
-	{
-		if (!Unload("filterscripts/" + args))
-		{
-			console->sendMessage(sender, "Filterscript '" + args + "' unload failed.");
-		}
-		else
-		{
-			console->sendMessage(sender, "Filterscript '" + args + "' unloaded.");
-		}
-		return true;
-	}
-	else if (cmd == "reloadfs")
-	{
-		if (!Reload("filterscripts/" + args))
-		{
-			console->sendMessage(sender, "Filterscript '" + args + "' reload failed.");
-		}
-		else
-		{
-			console->sendMessage(sender, "Filterscript '" + args + "' reloaded.");
-		}
-		return true;
-	}
-	else if (cmd == "gmx")
-	{
-		EndMainScript();
-		return true;
-	}
-	else if (cmd == "changemode")
-	{
-		if (reloading_)
-		{
-			return true;
-		}
-		if (Changemode("gamemodes/" + args))
-		{
-			gamemodeRepeat_ = 1;
-		}
-		return true;
-	}
-	// New commands.
-	else if (cmd == "loadscript")
+	if (cmd == "loadscript")
 	{
 		if (!Load(args))
 		{
@@ -465,7 +402,6 @@ void PawnManager::openAMX(PawnScript& script, bool isEntryScript, bool restartin
 
 	eventDispatcher.dispatch(&PawnEventHandler::onAmxLoad, script);
 	pawn_natives::AmxLoad(script.GetAMX());
-	pluginManager.AmxLoad(script.GetAMX());
 
 	cell amxAddr;
 	cell* realAddr;
@@ -607,7 +543,7 @@ void PawnManager::closeAMX(PawnScript& script, bool isEntryScript)
 	if (isEntryScript)
 	{
 		// We keep a set of NPC IPlayer handles here to prevent calling OnPlayerDisconnect for them.
-		// This is because during a server reset/restart/gmx all NPCs are destroyed before reaching this part
+		// This is because during a server reset/restart all NPCs are destroyed before reaching this part
 		// Of the code, just like the other server sided entites we destroy, i.e. objects, pickups, and etc.
 		FlatPtrHashSet<IPlayer> npcPlayerHandles;
 		if (PawnManager::Get()->npcs)
@@ -648,7 +584,6 @@ void PawnManager::closeAMX(PawnScript& script, bool isEntryScript)
 	}
 
 	PawnTimerImpl::Get()->killTimers(script.GetAMX());
-	pluginManager.AmxUnload(script.GetAMX());
 	eventDispatcher.dispatch(&PawnEventHandler::onAmxUnload, script);
 	amxToScript_.erase(script.GetAMX());
 }

@@ -7,7 +7,6 @@
  */
 
 #include "Manager/Manager.hpp"
-#include "PluginManager/PluginManager.hpp"
 #include "Scripting/Impl.hpp"
 #include "Server/Components/Pawn/pawn.hpp"
 #include <ghc/filesystem.hpp>
@@ -113,7 +112,6 @@ public:
 		PawnManager::Get()->core = core;
 		PawnManager::Get()->config = &core->getConfig();
 		PawnManager::Get()->players = &core->getPlayers();
-		PawnManager::Get()->pluginManager.core = core;
 		core->getEventDispatcher().addEventHandler(this);
 
 		// Set AMXFILE environment variable to "{current_dir}/scriptfiles"
@@ -180,18 +178,8 @@ public:
 	void onReady() override
 	{
 		PawnManager* mgr = PawnManager::Get();
-		PawnPluginManager& pluginMgr = PawnManager::Get()->pluginManager;
-
-		// read values of plugins, main_scripts and side_scripts from config file
+		// read values of main_scripts and side_scripts from config file
 		IConfig& config = core->getConfig();
-
-		// load plugins
-		DynamicArray<StringView> plugins(config.getStringsCount("pawn.legacy_plugins"));
-		config.getStrings("pawn.legacy_plugins", Span<StringView>(plugins.data(), plugins.size()));
-		for (auto& plugin : plugins)
-		{
-			pluginMgr.Load(String(plugin));
-		}
 
 		// load scripts
 		DynamicArray<StringView> sideScripts(config.getStringsCount("pawn.side_scripts"));
@@ -255,7 +243,6 @@ public:
 
 	void onTick(Microseconds elapsed, TimePoint now) override
 	{
-		PawnManager::Get()->pluginManager.ProcessTick();
 		PawnManager::Get()->ProcessTick(elapsed, now);
 	}
 
@@ -295,7 +282,6 @@ public:
 			StringView scripts[] = { "test 1" };
 			config.setStrings("pawn.main_scripts", Span<StringView>(scripts, 1));
 			config.setStrings("pawn.side_scripts", Span<StringView>());
-			config.setStrings("pawn.legacy_plugins", Span<StringView>());
 		}
 	}
 

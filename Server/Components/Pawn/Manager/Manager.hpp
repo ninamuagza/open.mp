@@ -42,7 +42,6 @@
 #include <vector>
 #include <string>
 
-#include "../PluginManager/PluginManager.hpp"
 #include "../Script/Script.hpp"
 
 using namespace Impl;
@@ -55,7 +54,6 @@ public:
 	PawnScript* mainScript_;
 	FlatHashMap<AMX*, PawnScript*> amxToScript_;
 	DefaultEventDispatcher<PawnEventHandler> eventDispatcher;
-	PawnPluginManager pluginManager;
 
 private:
 	int gamemodeIndex_ = 0;

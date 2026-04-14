@@ -86,7 +86,6 @@ const FlatHashMap<StringView, StringView> dictionary = {
 	{ "rcon_password", "rcon.password" },
 	{ "gamemode", "pawn.main_scripts" },
 	{ "filterscripts", "pawn.side_scripts" },
-	{ "plugins", "pawn.legacy_plugins" },
 	{ "announce", "announce" },
 	{ "query", "enable_query" },
 	{ "hostname", "name" },
